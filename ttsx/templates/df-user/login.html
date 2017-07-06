@@ -1,0 +1,73 @@
+{% extends 'base.html' %}
+{% block head %}
+    <script>
+        $(function () {
+            $('.user_error').show();
+            $('.pwd_error').show();
+            $('form').submit(function () {
+                var error_name = false;
+                var error_pwd = false;
+
+                var name_length = $('#name_input').val().length;
+                if(name_length<5 || name_length >20){
+                    $('.user_error').html('请输入5-20个字符的用户名').show();
+                    error_name = true
+                }
+                else{
+                    $('.user_error').html('').hide();
+                    error_name = false;
+                }
+
+                var pwd_length = $('#pass_input').val().length;
+                if(pwd_length>20 || pwd_length <8){
+                    $('.pwd_error').html('密码最少8位，最长20位').show();
+                    error_pwd = true;
+                }
+                else{
+                    $('.pwd_error').html('').hide();
+                    error_pwd = false;
+                }
+
+                if(!error_name && !error_pwd){
+                    return true;
+                }
+                else{
+                    return false;
+                }
+            });
+        });
+    </script>
+{% endblock head %}
+{% block body %}
+	<div class="login_top clearfix">
+		<a href="../index.html" class="login_logo"><img src="/static/images/logo02.png"></a>
+	</div>
+
+	<div class="login_form_bg">
+		<div class="login_form_wrap clearfix">
+			<div class="login_banner fl"></div>
+			<div class="slogan fl">日夜兼程 · 急速送达</div>
+			<div class="login_form fr">
+				<div class="login_title clearfix">
+					<h1>用户登录</h1>
+					<a href="/user/register/">立即注册</a>
+				</div>
+				<div class="form_input">
+					<form method="post" action="/user/login_check/">
+                        {% csrf_token %}
+						<input type="text" name="username" id="name_input" class="name_input" placeholder="请输入用户名" value={{ uname }}>
+						<div class="user_error">{{ username|default:" "}}</div>
+						<input type="password" name="pwd" id="pass_input" class="pass_input" placeholder="请输入密码" value={{ upwd }}>
+						<div class="pwd_error">{{ password|default:" " }}</div>
+						<div class="more_input clearfix">
+							<input type="checkbox" name="remember_pwd" checked="checked" value="1">
+							<label>记住用户名</label>
+							<a href="#">忘记密码</a>
+						</div>
+						<input type="submit" name="" value="登录" class="input_submit">
+					</form>
+				</div>
+			</div>
+		</div>
+	</div>
+{% endblock body %}

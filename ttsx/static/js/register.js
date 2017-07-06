@@ -9,6 +9,7 @@ $(function(){
 
 	$('#user_name').blur(function() {
 		check_user_name();
+
 	});
 
 	$('#pwd').blur(function() {
@@ -48,8 +49,17 @@ $(function(){
 		}
 		else
 		{
-			$('#user_name').next().hide();
-			error_name = false;
+			$.get('/user/check_user_name/', {'name':$("#user_name").val()}, function (data) {
+                if (data.status == 'error') {
+                    $('#user_name').next().html('用户名已存在').show();
+                    error_name = true;
+                    // alert(error_name);
+                }
+                else {
+                    $('#user_name').next().hide();
+                    error_name = false;
+                }
+            });
 		}
 	}
 
@@ -110,7 +120,7 @@ $(function(){
 		check_pwd();
 		check_cpwd();
 		check_email();
-
+		// alert(error_name)
 		if(error_name == false && error_password == false && error_check_password == false && error_email == false && error_check == false)
 		{
 			return true;

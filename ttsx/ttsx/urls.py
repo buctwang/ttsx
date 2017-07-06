@@ -1,3 +1,4 @@
+# -*- coding:utf-8 -*-
 """ttsx URL Configuration
 
 The `urlpatterns` list routes URLs to views. For more information please see:
@@ -18,4 +19,5 @@ from django.contrib import admin
 
 urlpatterns = [
     url(r'^admin/', include(admin.site.urls)),
+    url(r'^user/', include('df_user.urls')),  # 引入用户管理模块的urls
 ]
