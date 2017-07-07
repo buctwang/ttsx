@@ -20,4 +20,5 @@ from django.contrib import admin
 urlpatterns = [
     url(r'^admin/', include(admin.site.urls)),
     url(r'^user/', include('df_user.urls')),  # 引入用户管理模块的urls
+    url(r'^goods/',include('goods.urls')),  # 引入商品模块的urls
 ]

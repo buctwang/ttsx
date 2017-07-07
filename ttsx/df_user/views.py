@@ -4,16 +4,8 @@ from hashlib import sha1
 from .models import UserInfo
 from django.http import JsonResponse
 import datetime
+from .user_decoration import is_login
 
-
-def is_login(func):
-    def wrapper(request):
-        try:
-            uid = request.session['uid']
-        except KeyError:
-            return redirect('/user/login/')
-        return func(request)
-    return wrapper
 
 # Create your views here.
 # 返回注册页面
@@ -100,18 +92,26 @@ def login_check(request):
         content['password'] = '密码错误'
 
         return render(request, 'df-user/login.html', content)
-    # 程序到达这一步表明用户名和密码正确，使用ｃｏｏｋｉｅ记住用户名;去掉勾选删除cookie
+    # 程序到达这一步表明用户名和密码正确;使用cookie记住用户名;去掉勾选删除cookie
 
-    response = redirect('/user/user_center_info/')
+    if request.session.has_key('url_path'):
+        response = redirect(request.session['url_path'])  # 跳转到之前浏览页面，该页面已在中间件中记录
+    else:
+        response = redirect('/user/user_center_info/')
     if uremember_pwd == '1':
         response.set_cookie('uname',user_name, expires=datetime.datetime.now() + datetime.timedelta(days=14))
     else:
         response.set_cookie('uname', max_age=-1)
     # 记住登陆用户的id，使用session
     request.session['uid'] = userinfo.id
+    request.session['uname'] = userinfo.uname
     request.session.set_expiry(120)
     return response
 
+
+def logout(request):
+    request.session.flush()
+    return redirect('/user/login/')
 
 # 用户中心用户信息
 @is_login
