@@ -1,6 +1,13 @@
 # -*- coding:utf-8 -*-
 from django.shortcuts import render
 from .models import GoodsInfo, GoodsType
+from django.core.paginator import Paginator
+
+
+# 查询所有商品类别
+def all_type():
+    types = GoodsType.objects.all()
+    return types
 
 
 # Create your views here.
@@ -22,6 +29,28 @@ def index(request):
 # 显示详情页
 def detail(request, gid):
     content = {'title':'商品详情', 'search_style':'1'}
-    good = GoodsInfo.objects.get(id=gid)
+    good = GoodsInfo.objects.get(pk=gid)
+    new_goods = good.type.goodsinfo_set.order_by('-id')[0:2]
+    content['new_goods'] = new_goods
     content['good'] = good
     return render(request, 'goods/detail.html', content)
+
+
+# 显示商品列表页
+def list(request, tid, page_index):
+    content = {'title':'商品列表', 'search_style':'1'}
+    # 查询相应的商品类别
+    type = GoodsType.objects.get(pk=int(tid))
+    content['type'] = type
+    # 查询该类别下的所有商品
+    goods = type.goodsinfo_set.all()
+    # 新品推荐的两个商品
+    new_goods = GoodsInfo.objects.filter(type=type).order_by('-id')[0:2]
+    content['new_goods'] = new_goods
+
+    # 分页
+    paginator = Paginator(goods, 15)
+    page = paginator.page(int(page_index))
+    content['page'] = page
+    return render(request, 'goods/list.html/', content)
+
