@@ -30,6 +30,10 @@ def index(request):
 def detail(request, gid):
     content = {'title':'商品详情', 'search_style':'1'}
     good = GoodsInfo.objects.get(pk=gid)
+    # 增加一次点击量，保存数据库，在列表页可以按点击量排序
+    good.click += 1
+    good.save()
+    # 查询最新的两个商品
     new_goods = good.type.goodsinfo_set.order_by('-id')[0:2]
     content['new_goods'] = new_goods
     content['good'] = good
@@ -38,12 +42,21 @@ def detail(request, gid):
 
 # 显示商品列表页
 def list(request, tid, page_index):
-    content = {'title':'商品列表', 'search_style':'1'}
+    content = {'title': '商品列表', 'search_style': '1'}
+    # 商品排序依据 1默认　２价格　３人气
+    order_by = request.GET.get('order_by')
+    content['order_by'] = order_by
+
     # 查询相应的商品类别
     type = GoodsType.objects.get(pk=int(tid))
     content['type'] = type
     # 查询该类别下的所有商品
-    goods = type.goodsinfo_set.all()
+    if order_by == '1':
+        goods = type.goodsinfo_set.order_by('id')
+    elif order_by == '2':
+        goods = type.goodsinfo_set.order_by('price')
+    else:
+        goods = type.goodsinfo_set.order_by('-click')
     # 新品推荐的两个商品
     new_goods = GoodsInfo.objects.filter(type=type).order_by('-id')[0:2]
     content['new_goods'] = new_goods

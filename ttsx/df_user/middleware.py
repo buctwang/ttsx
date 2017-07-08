@@ -2,7 +2,7 @@
 class UrlPathMiddleware(object):
     # 记录用户登录前浏览的页面url
     def process_request(self, request):
-        print request.path
+        # print request.path
         if request.path not in [
             '/user/login/',
             '/user/register/',
@@ -12,6 +12,6 @@ class UrlPathMiddleware(object):
             '/user/logout/',
         ]:
             request.session['url_path'] = request.get_full_path()
-            print request.session['url_path']
+            # print request.session['url_path']
 
 
