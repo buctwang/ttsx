@@ -51,12 +51,12 @@ def list(request, tid, page_index):
     type = GoodsType.objects.get(pk=int(tid))
     content['type'] = type
     # 查询该类别下的所有商品
-    if order_by == '1':
-        goods = type.goodsinfo_set.order_by('id')
+    if order_by == '3':
+        goods = type.goodsinfo_set.order_by('-click')
     elif order_by == '2':
         goods = type.goodsinfo_set.order_by('price')
     else:
-        goods = type.goodsinfo_set.order_by('-click')
+        goods = type.goodsinfo_set.order_by('id')
     # 新品推荐的两个商品
     new_goods = GoodsInfo.objects.filter(type=type).order_by('-id')[0:2]
     content['new_goods'] = new_goods

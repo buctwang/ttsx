@@ -1,13 +1,6 @@
 {% extends 'goods/base.html' %}
 {% block head %}
-    <script>
-        $(function () {
-            $('.sort_bar a ').click(function () {
-                $(this).addClass('active').siblings().removeClass('active');
-            });
-        });
 
-    </script>
 {% endblock head%}
 
 {% block detail %}
@@ -15,25 +8,25 @@
 	<div class="breadcrumb">
 		<a href="/">全部分类</a>
 		<span>></span>
-		<a href="#">{{ type.type }}</a>
+		<a href="/list{{ type.id }}_1">{{ type.type }}</a>
 	</div>
 {% endblock detail %}
 
 {% block right %}
 		<div class="r_wrap fr clearfix">
 			<div class="sort_bar">
-                {% if order_by == '1' %}
-				<a href="/list{{ type.id }}_1?order_by=1" class="active">默认</a>
+                {% if order_by == '3' %}
+				<a href="/list{{ type.id }}_1?order_by=1">默认</a>
 				<a href="/list{{ type.id }}_1?order_by=2">价格</a>
-				<a href="/list{{ type.id }}_1?order_by=3">人气</a>
+				<a href="/list{{ type.id }}_1?order_by=3" class="active">人气</a>
                 {% elif order_by == '2' %}
                 <a href="/list{{ type.id }}_1?order_by=1">默认</a>
 				<a href="/list{{ type.id }}_1?order_by=2" class="active">价格</a>
 				<a href="/list{{ type.id }}_1?order_by=3">人气</a>
                 {% else %}
-                <a href="/list{{ type.id }}_1?order_by=1">默认</a>
+                <a href="/list{{ type.id }}_1?order_by=1" class="active">默认</a>
 				<a href="/list{{ type.id }}_1?order_by=2">价格</a>
-				<a href="/list{{ type.id }}_1?order_by=3" class="active">人气</a>
+				<a href="/list{{ type.id }}_1?order_by=3" >人气</a>
                 {% endif %}
 			</div>
 
@@ -52,6 +45,8 @@
 			</ul>
 
 			<div class="pagenation">
+            {#    简单分页，显示所有分页页码。存在问题：页数较多时，显示所有页码        #}
+            {% comment %}
                 {% if page.has_previous %}
 				    <a href="/list{{ type.id }}_{{ page.number|add:'-1' }}?order_by={{ order_by }}">上一页</a>
                 {% endif %}
@@ -64,8 +59,57 @@
 
                 {% endfor %}
                 {% if page.has_next %}
-			    	<a href="#">下一页></a>
+			    	<a href="/list{{ type.id }}_{{ page.number|add:'1' }}?order_by={{ order_by }}">下一页></a>
                 {% endif %}
+            {% endcomment %}
+            {#    改进后的分页，　显示形式如下　　首页 上一页 ... 3 4 5 6 7 ... 下一页 尾页        #}
+            {% if page.paginator.num_pages > 5 %}
+                {% if page.has_previous %}
+                    <a href="/list{{ type.id }}_1?order_by={{ order_by }}">首页</a>
+                    <a href="/list{{ type.id }}_{{ page.number|add:'-1' }}?order_by={{ order_by }}">上一页</a>
+                {% endif %}
+                {# 特殊处理当前页是１和２时的页码显示               #}
+                {% if page.number == 2 or page.number == 1 %}
+                    <a href="/list{{ type.id }}_1?order_by={{ order_by }}" {% if page.number == 1 %}class="active"{% endif %}>1</a>
+                    <a href="/list{{ type.id }}_2?order_by={{ order_by }}" {% if page.number == 2 %}class="active"{% endif %}>2</a>
+                    <a href="/list{{ type.id }}_3?order_by={{ order_by }}">3</a>
+                    <a href="/list{{ type.id }}_4?order_by={{ order_by }}">4</a>
+                    <a href="/list{{ type.id }}_5?order_by={{ order_by }}">5</a>
+                    <a href="#">...</a>
+                {# 单独处理倒数第一页和倒数第二页时的页码显示        #}
+                {% elif page.number == page.paginator.num_pages|add:'-1' or page.number == page.paginator.num_pages %}
+                    <a href="#">...</a>
+                    <a href="/list{{ type.id }}_{{ page.paginator.num_pages|add:'-4' }}?order_by={{ order_by }}">{{ page.paginator.num_pages|add:'-4' }}</a>
+                    <a href="/list{{ type.id }}_{{ page.paginator.num_pages|add:'-3' }}?order_by={{ order_by }}">{{ page.paginator.num_pages|add:'-3' }}</a>
+                    <a href="/list{{ type.id }}_{{ page.paginator.num_pages|add:'-2' }}?order_by={{ order_by }}">{{ page.paginator.num_pages|add:'-2' }}</a>
+                    <a href="/list{{ type.id }}_{{ page.paginator.num_pages|add:'-1' }}?order_by={{ order_by }}" {% if page.number == page.paginator.num_pages|add:'-1' %}class="active"{% endif %}>{{ page.paginator.num_pages|add:'-1' }}</a>
+                    <a href="/list{{ type.id }}_{{ page.paginator.num_pages}}?order_by={{ order_by }}" {% if page.number == page.paginator.num_pages %}class="active"{% endif %}>{{ page.paginator.num_pages}}</a>
+                {# 除了特殊的４个页号外其它页面的显示　              #}
+                {% else %}
+                    <a href="#">...</a>
+
+                    <a href="/list{{ type.id }}_{{ page.number|add:'-2' }}?order_by={{ order_by }}">{{ page.number|add:'-2' }}</a>
+                    <a href="/list{{ type.id }}_{{ page.number|add:'-1' }}?order_by={{ order_by }}">{{ page.number|add:'-1' }}</a>
+                     <a href="#" class="active">{{ page.number }}</a>
+                    <a href="/list{{ type.id }}_{{ page.number|add:'1' }}?order_by={{ order_by }}">{{ page.number|add:'1' }}</a>
+                    <a href="/list{{ type.id }}_{{ page.number|add:'2' }}?order_by={{ order_by }}">{{ page.number|add:'2' }}</a>
+                    <a href="#">...</a>
+                {% endif %}
+                {% if page.has_next %}
+                    <a href="/list{{ type.id }}_{{ page.number|add:'1' }}?order_by={{ order_by }}">下一页</a>
+                    <a href="/list{{ type.id }}_{{ page.paginator.num_pages }}?order_by={{ order_by }}">尾页</a>
+                {% endif %}
+            {# 总页数不足５页是的逻辑，显示所有页码号即可            #}
+            {% else %}
+                {% for pindex in page.paginator.page_range %}
+                    {% if pindex == page.number %}
+                        <a href="/list{{ type.id }}_{{ pindex }}?order_by={{ order_by }}" class="active">{{ pindex }}</a>
+                    {% else %}
+                        <a href="/list{{ type.id }}_{{ pindex }}?order_by={{ order_by }}">{{ pindex }}</a>
+                    {% endif %}
+                {% endfor %}
+            {% endif %}
+
 			</div>
 		</div>
 	</div>
