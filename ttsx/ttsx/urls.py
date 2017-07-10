@@ -1,3 +1,6 @@
+# -*-coding:utf-8 -*-
+from goods.search import MySearchView
+
 # -*- coding:utf-8 -*-
 """ttsx URL Configuration
 
@@ -22,4 +25,5 @@ urlpatterns = [
     url(r'^user/', include('df_user.urls')),  # 引入用户管理模块的urls
     url(r'^',include('goods.urls')),  # 引入商品模块的urls
     url(r'^tinymce/', include('tinymce.urls')),  # tinymce
+    url(r'^search/', MySearchView.as_view()),
 ]
