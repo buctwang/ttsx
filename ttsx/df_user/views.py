@@ -5,6 +5,7 @@ from .models import UserInfo
 from django.http import JsonResponse
 import datetime
 from .user_decoration import is_login
+from goods.models import GoodsInfo
 
 
 # Create your views here.
@@ -105,7 +106,7 @@ def login_check(request):
     # 记住登陆用户的id，使用session
     request.session['uid'] = userinfo.id
     request.session['uname'] = userinfo.uname
-    request.session.set_expiry(120)
+    request.session.set_expiry(60*60*24)
     return response
 
 
@@ -123,6 +124,14 @@ def user_center_info(request):
     content['uname'] = user.uname
     content['uphone'] = user.uphone
     content['uaddress'] = user.uaddress
+
+    # 读取cookie,向上下文中传递最近浏览记录
+    recently_look = request.COOKIES.get('recently_look', '').split(',')
+    glist = []
+    for i in recently_look:
+        if i != '':
+            glist.append(GoodsInfo.objects.get(id = i))
+    content['glist'] = glist
     return render(request, 'df-user/user_center_info.html', content)
 
 
@@ -157,6 +166,13 @@ def user_center_site(request):
     content['uphone'] = user.uphone
     return render(request, 'df-user/user_center_site.html', content)
 
+
+# ajax验证当前用户是否登陆
+def islogin(request):
+    result = 0;
+    if request.session.has_key('uid'):
+        result = 1
+    return JsonResponse({'islogin':result})
 
 
 

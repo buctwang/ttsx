@@ -10,6 +10,7 @@ class UrlPathMiddleware(object):
             '/user/register_check/',
             '/user/check_user_name/',
             '/user/logout/',
+            '/user/islogin/',
         ]:
             request.session['url_path'] = request.get_full_path()
             # print request.session['url_path']

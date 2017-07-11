@@ -25,5 +25,6 @@ urlpatterns = [
     url(r'^user/', include('df_user.urls')),  # 引入用户管理模块的urls
     url(r'^',include('goods.urls')),  # 引入商品模块的urls
     url(r'^tinymce/', include('tinymce.urls')),  # tinymce
-    url(r'^search/', MySearchView.as_view()),
+    url(r'^search/', MySearchView.as_view()),  # 全文检索
+    url(r'^cart/', include('cart.urls')),  # 购物车模块
 ]

@@ -1,27 +1,49 @@
 {% extends 'goods/base.html' %}
 {% block head %}
      <script type="text/javascript">
+     function add(gid) {
+            $.get('/user/islogin/',function (data) {
+                if(data.islogin == '1')
+                {
+                    $.get('/cart/add/', {'gid':gid, 'gnum':$('.num_show').val()}, function (data) {
+                        if(data.success == '1')
+                        {
+                            var $add_x = $('#add_cart').offset().top;
+                            var $add_y = $('#add_cart').offset().left;
+
+                            var $to_x = $('#show_count').offset().top;
+                            var $to_y = $('#show_count').offset().left;
+                            var store = parseInt($('.store').val());
+
+                            $(".add_jump").css({'left':$add_y+80,'top':$add_x+10,'display':'block'});
+                                $(".add_jump").stop().animate({
+                                    'left': $to_y+7,
+                                    'top': $to_x+7},
+                                    "fast",
+                                    function() {
+                                        $(".add_jump").fadeOut('fast', function () {
+                                            $.get('/cart/count/', function (data) {
+                                                $('#show_count').html(data.count);
+                                            })
+
+                                        });
+                                    });
+                        }
+                        else
+                        {
+                            alert('加入购物车失败，请稍后重试。')
+                        }
+                    });
+                }
+                else
+                {
+                    location.href = '/user/login/';
+                }
+            });
+        }
     $(function(){
 
-		var $add_x = $('#add_cart').offset().top;
-		var $add_y = $('#add_cart').offset().left;
 
-		var $to_x = $('#show_count').offset().top;
-		var $to_y = $('#show_count').offset().left;
-        var store = parseInt($('.store').val());
-
-		$('#add_cart').click(function(){
-		    $(".add_jump").css({'left':$add_y+80,'top':$add_x+10,'display':'block'});
-			$(".add_jump").stop().animate({
-				'left': $to_y+7,
-				'top': $to_x+7},
-				"fast",
-                function() {
-                    $(".add_jump").fadeOut('fast', function () {
-                        $('#show_count').html(2);
-                    });
-                });
-        });
 
 		$('.add').click(function () {
 
@@ -90,7 +112,7 @@
 			<div class="total">总价：<em>{{ good.price }}元</em></div>
 			<div class="operate_btn">
 				<a href="javascript:;" class="buy_btn">立即购买</a>
-				<a href="javascript:;" class="add_cart" id="add_cart">加入购物车</a>				
+				<a href="javascript:add({{ good.id }});" class="add_cart" id="add_cart">加入购物车</a>
 			</div>
 		</div>
 	</div>

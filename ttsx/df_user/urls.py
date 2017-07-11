@@ -11,4 +11,5 @@ urlpatterns = [
     url(r'^user_center_order/$', views.user_center_order),
     url(r'^user_center_site/$', views.user_center_site),
     url(r'^logout/$', views.logout),
+    url(r'^islogin/$', views.islogin),
 ]
