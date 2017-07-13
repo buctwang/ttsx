@@ -105,7 +105,7 @@
 		<li class="col05">小计</li>
 		<li class="col06">操作</li>
 	</ul>
-     <form method="post" action="/cart/order/">
+     <form method="post" action="/order/">
      {% csrf_token %}
     {% for goods in glist %}
 	<ul class="cart_list_td clearfix">
@@ -113,7 +113,7 @@
             <input type="hidden" id="id", value="{{ goods.id}}">
             <input type="hidden" id="store" value="{{ goods.goods.store }}"></li>
 		<li class="col02"><img src="/static/{{ goods.goods.pic }}"></li>
-		<li class="col03">{{ goods.goods.title }}<br><em>{{ goods.goods.price }}元/{{ goods.goods.unit }}</em></li>
+		<li class="col03">{{ goods.goods.title|truncatechars:20 }}<br><em>{{ goods.goods.price }}元/{{ goods.goods.unit }}</em></li>
 		<li class="col04">{{ goods.goods.unit }}</li>
 		<li class="col05">{{ goods.goods.price }}元</li>
 		<li class="col06">
