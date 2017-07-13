@@ -43,3 +43,23 @@ def cart(request):
     glist = CartInfo.objects.filter(user_id=uid)
     content['glist'] = glist
     return render(request, 'cart/cart.html', content)
+
+
+def edit(request):
+    id = request.GET.get('id')
+    print id
+    num = request.GET.get('num')
+    cart = CartInfo.objects.get(pk=id)
+    cart.num = int(num)
+    cart.save()
+    return JsonResponse({'success':1})
+
+
+def delete(request):
+    id = request.GET.get('id')
+    cart = CartInfo.objects.get(pk=id)
+    cart.delete()
+    return JsonResponse({'success':1})
+
+
+

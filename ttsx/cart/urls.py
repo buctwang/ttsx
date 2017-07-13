@@ -6,4 +6,6 @@ urlpatterns = [
     url(r'^add/$', views.add),
     url(r'^count/$', views.count),
     url(r'^$',views.cart),
+    url(r'^edit/$', views.edit),
+    url(r'^delete/$', views.delete),
 ]

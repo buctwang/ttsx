@@ -27,4 +27,5 @@ urlpatterns = [
     url(r'^tinymce/', include('tinymce.urls')),  # tinymce
     url(r'^search/', MySearchView.as_view()),  # 全文检索
     url(r'^cart/', include('cart.urls')),  # 购物车模块
+    url(r'^order/', include('order.urls')), # 订单模块
 ]
